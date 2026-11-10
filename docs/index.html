@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="RBTV's standalone production graphics controller for The Prep Signal.">
+  <title>The Prep Signal · RBTV Control</title>
+  <link rel="stylesheet" href="./graphics.css">
+  <link rel="stylesheet" href="./desk.css">
+</head>
+<body>
+  <header class="mast">
+    <div class="brand"><span class="signal-icon" aria-hidden="true"><i></i><i></i><i></i></span><div><div class="eyebrow">RBTV BROADCAST SYSTEMS</div><strong>THE PREP SIGNAL</strong></div></div>
+    <div class="mast-actions">
+      <span id="connection" class="connection" data-state="loading">Connecting</span>
+      <button id="copy" class="button">Copy output URL</button>
+      <a class="button" id="open" href="./output.html" target="_blank" rel="noopener">Open output ↗</a>
+      <button id="settings" class="button">Output Settings</button>
+      <button id="clear" class="button danger" title="Clear all output layers (Esc)">Clear all <kbd>Esc</kbd></button>
+    </div>
+  </header>
+  <main>
+    <div class="brief"><div><p class="eyebrow">SHOW CONTROL / 01</p><h1>Graphics desk</h1></div><p>Prepare a cue in Preview, then <strong>TAKE</strong> it to Program.</p></div>
+    <div class="workstation">
+      <section class="panel rundown" aria-labelledby="rundown-title">
+        <div class="panel-head"><div><p class="eyebrow">01 / CUES</p><h2 id="rundown-title">Rundown</h2></div><button id="add" class="button mini">+ Add</button></div>
+        <div class="library-launch"><button id="bumpers" class="button mini">▶ Bumpers</button><span id="library-count"></span></div>
+        <div class="cue-list" id="cue-list" aria-label="Rundown cues"></div>
+        <div class="rundown-foot">
+          <button id="export" class="button mini">Export</button><button id="import" class="button mini">Import</button>
+          <input id="file" type="file" accept=".json,application/json" hidden>
+        </div>
+      </section>
+      <section class="monitor-column" aria-label="Output monitors">
+        <div class="panel monitor">
+          <div class="monitor-head"><span class="tally preview-tally">PREVIEW</span><span id="preview-label">Select a cue</span><span>16:9</span></div>
+          <div id="preview" class="monitor-screen preview-screen"></div>
+          <div class="monitor-foot"><span>Edits here are not on air.</span><button id="take" class="button take" title="Take preview to program (Ctrl/⌘+Enter)">TAKE <kbd>⌘↵</kbd></button></div>
+        </div>
+        <div class="panel monitor">
+          <div class="monitor-head"><span class="tally" id="program-tally">PROGRAM</span><span id="program-label">Output is clear</span><span>1080p</span></div>
+          <div id="program" class="monitor-screen"></div>
+          <div class="monitor-foot"><span>Monitor muted · browser output carries playback audio</span><span id="program-background">Transparent</span></div>
+        </div>
+      </section>
+      <aside class="inspector">
+        <section class="panel editor" aria-labelledby="editor-title">
+          <div class="panel-head"><div><p class="eyebrow">02 / PREPARE</p><h2 id="editor-title">Cue editor</h2></div><span id="type-pill" class="type-pill"></span></div>
+          <form id="editor"></form>
+          <div id="editor-actions" class="editor-actions"></div>
+        </section>
+        <section class="panel onair" aria-labelledby="onair-title">
+          <div class="panel-head"><div><p class="eyebrow">03 / OUTPUT</p><h2 id="onair-title">Active layers</h2></div></div>
+          <div id="active" class="active-list"></div>
+        </section>
+      </aside>
+    </div>
+    <footer class="foot"><span id="mode-help">Opening show control…</span><span><kbd>Ctrl/⌘ + Enter</kbd> Take &nbsp; <kbd>Esc</kbd> Clear all</span></footer>
+    <footer class="foot"><span>Public web mode: controller and output must use the same browser profile.</span><span><a class="button mini" href="https://github.com/RBTVGraphics/graphics#readme" target="_blank" rel="noopener">Setup guide</a> <a class="button mini" href="https://github.com/RBTVGraphics/graphics/archive/refs/heads/main.zip">Download offline studio</a></span></footer>
+  </main>
+  <dialog id="add-dialog">
+    <form method="dialog">
+      <div class="panel-head"><div><p class="eyebrow">RUNDOWN / NEW CUE</p><h2>Add a graphic</h2></div><button class="button mini" value="cancel" aria-label="Close">✕</button></div>
+      <div class="template-section">
+        <p class="eyebrow">SEGMENT GRAPHICS / 15 TEMPLATES</p>
+        <div id="segment-templates" class="template-grid"></div>
+      </div>
+      <div class="template-section">
+        <p class="eyebrow">GENERAL GRAPHICS &amp; PLAYBACK</p>
+        <div id="templates" class="template-grid"></div>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="bumper-dialog" aria-labelledby="bumper-title">
+    <form method="dialog">
+      <div class="panel-head"><div><p class="eyebrow">PLAYBACK / THE PREP SIGNAL</p><h2 id="bumper-title">Segment bumper library</h2></div><button class="button mini" value="cancel" aria-label="Close bumper library">✕</button></div>
+    </form>
+    <div class="library-layout">
+      <div id="bumper-list" class="bumper-list" aria-label="Available segments"></div>
+      <div class="bumper-detail">
+        <p class="eyebrow">OFF-AIR PREVIEW / 04.5 SEC</p>
+        <h3 id="bumper-name"></h3>
+        <video id="bumper-video" controls muted playsinline preload="metadata" aria-label="Off-air bumper preview"></video>
+        <p id="bumper-idea"></p>
+        <div class="bumper-actions"><button id="bumper-add" class="button take">Add to rundown</button><button id="matching-board" class="button">Add matching graphic</button></div>
+      </div>
+    </div>
+  </dialog>
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <form method="dialog">
+      <div class="panel-head"><div><p class="eyebrow">CLEAN OUTPUT / SWITCHER</p><h2 id="settings-title">Output Settings</h2></div><button class="button mini" value="cancel" aria-label="Close output settings">✕</button></div>
+    </form>
+    <div class="settings-body">
+      <p>Choose what fills the space behind your graphics. Full-screen boards and bumpers keep their own backgrounds.</p>
+      <fieldset class="color-options" id="color-options"><legend>Output background</legend></fieldset>
+      <p class="settings-hint">This changes the clean output as soon as you apply it. Set it before going live.</p>
+      <div class="settings-actions"><span id="current-background" aria-live="polite"></span><button id="apply-background" class="button take" type="button">Apply to output</button></div>
+    </div>
+  </dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="./desk.mjs"></script>
+</body>
+</html>
